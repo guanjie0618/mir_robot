@@ -64,7 +64,8 @@ class MapDrive(MarkerVisualization):
 
 		rospy.loginfo("Waiting for the move_base action server to come up")
 		self.move_base.wait_for_server()
-		self.move_base_plan = rospy.ServiceProxy('/move_base_node/make_plan', GetPlan)
+		# self.move_base_plan = rospy.ServiceProxy('/move_base_node/make_plan', GetPlan)
+		self.move_base_plan = rospy.ServiceProxy('/move_base_node/NavfnROS/make_plan', GetPlan)
 		rospy.loginfo("Got move_base action server")
 		rospy.on_shutdown(self.on_shutdown)
 
@@ -160,10 +161,12 @@ class MapDrive(MarkerVisualization):
 		rospy.loginfo("Boustrophedon Decomposition done")
 
 	def next_pos(self, x, y, angle):
-		rospy.loginfo("Moving to (%f, %f, %.0f�)" % (x, y, angle*180/pi))
+		rospy.loginfo("Moving to (%f, %f, %.0f)" % (x, y, angle*180/pi))
 
+		# [ERROR] Invalid goal status transition from ACTIVE to RECALLED
 		goal = MoveBaseGoal()
 		angle_quat = tf.transformations.quaternion_from_euler(0, 0, angle)
+		rospy.loginfo(angle_quat)
 		goal.target_pose.header.frame_id = self.global_frame
 		goal.target_pose.header.stamp = rospy.Time.now()
 		goal.target_pose.pose.position.x = x
@@ -175,6 +178,8 @@ class MapDrive(MarkerVisualization):
 		self.move_base.send_goal(goal)
 
 		self.move_base.wait_for_result()
+		# rospy.sleep(10.0) 
+		rospy.loginfo(self.move_base.get_state)
 
 		if self.move_base.get_state() == GoalStatus.SUCCEEDED:
 			rospy.loginfo("The base moved to (%f, %f)" % (x, y))
@@ -267,7 +272,7 @@ class MapDrive(MarkerVisualization):
 			return
 		angle+=pi/2 # up/down instead of left/right
 		poly_rotated = rotate_polygon(polygon, angle)
-		rospy.logdebug("Rotated polygon by %.0f�: %s" % (angle*180/pi, str(poly_rotated.exterior.coords[:])))
+		rospy.logdebug("Rotated polygon by %.0f: %s" % (angle*180/pi, str(poly_rotated.exterior.coords[:])))
 
 		if self.border_drive:
 			path_rotated = border_calc_path(poly_rotated, self.robot_width)
