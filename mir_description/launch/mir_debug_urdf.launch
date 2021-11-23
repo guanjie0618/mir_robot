@@ -7,7 +7,7 @@
   <include file="$(find mir_description)/launch/upload_mir_urdf.launch" />
 
   <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher">
-    <param name="use_gui" value="$(arg gui)"/>
+    <param name="use_gui" value="$(arg gui)" />
   </node>
 
   <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" />
