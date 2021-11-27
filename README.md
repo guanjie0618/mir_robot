@@ -93,7 +93,7 @@ rosrun signal heatmap.py
 ```
 
 ## Running the driver on the real robot
-### start up the robot
+### Start up the robot
 - switch on Mir
 - connect to its wifi
 - open mir.com
