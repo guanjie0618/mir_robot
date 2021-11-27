@@ -98,7 +98,7 @@ rosrun signal heatmap.py
 - connect to its wifi
 - open mir.com
 
-### Start the Ros driver
+### Start the ROS driver
 ```bash
 roslaunch mir_driver mir.launch
 roslaunch mir_navigation costmap.xml
